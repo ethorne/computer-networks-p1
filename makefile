@@ -1,5 +1,9 @@
 CFLAGS= -ansi -Wall -Werror -pedantic
 
+all:
+	make fingerclient
+	make fingerserver
+
 fingerclient:
 	g++ $(CFLAGS) fingerclient.cpp core.cpp -o fingerclient
 
