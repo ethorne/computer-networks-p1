@@ -1,10 +1,11 @@
-#include<iostream>
+#include <iostream>
 #include "core.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
-#include <string.h>
+#include <cstring>
+#include <string>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

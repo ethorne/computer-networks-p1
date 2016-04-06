@@ -1,20 +1,19 @@
-CFLAGS= -ansi -Wall -Werror -pedantic
+CFLAGS= -ansi -Wall -Werror -pedantic -Wno-write-strings -Wno-return-local-addr
 
-all:
-	make fingerclient
-	make fingerserver
+all: fingerclient fingerserver
 
-fingerclient: fingerclient.cpp core.o
-	g++ $(CFLAGS) fingerclient.cpp core.cpp -o fingerclient
+fingerclient: fingerclient.cpp core
+	g++ $(CFLAGS) fingerclient.cpp core -o fingerclient
 
-fingerserver: fingerserver.cpp core.o
-	g++ $(CFLAGS) fingerserver.cpp core.cpp -o fingerserver
+fingerserver: fingerserver.cpp core
+	g++ $(CFLAGS) fingerserver.cpp core -o fingerserver
 
-core.o: core.cpp
-	g++ $(CFLAGS) -c core.cpp -o core.o
+core: core.h core.cpp
+	g++ $(CFLAGS) -c core.cpp -o core
 
 clean:
 	rm -f *.o
+	rm -f core
 	rm -f fingerserver
 	rm -f fingerclient
 
