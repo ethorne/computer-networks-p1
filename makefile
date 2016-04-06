@@ -4,10 +4,10 @@ all:
 	make fingerclient
 	make fingerserver
 
-fingerclient: core.o
+fingerclient: fingerclient.cpp core.o
 	g++ $(CFLAGS) fingerclient.cpp core.cpp -o fingerclient
 
-fingerserver: core.o
+fingerserver: fingerserver.cpp core.o
 	g++ $(CFLAGS) fingerserver.cpp core.cpp -o fingerserver
 
 core.o: core.cpp
