@@ -1,19 +1,19 @@
 CFLAGS= -ansi -Wall -Werror -pedantic -Wno-write-strings -Wno-return-local-addr
 
-all: fingerclient fingerserver
+all: fingerclient fingerserver 
 
-fingerclient: fingerclient.cpp core
-	g++ $(CFLAGS) fingerclient.cpp core -o fingerclient
+fingerclient: fingerclient.cpp connectionMgr
+	g++ $(CFLAGS) fingerclient.cpp connectionMgr -o fingerclient
 
-fingerserver: fingerserver.cpp core
-	g++ $(CFLAGS) fingerserver.cpp core -o fingerserver
+fingerserver: fingerserver.cpp connectionMgr
+	g++ $(CFLAGS) fingerserver.cpp connectionMgr -o fingerserver
 
-core: core.h core.cpp
-	g++ $(CFLAGS) -c core.cpp -o core
+connectionMgr: connectionMgr.h connectionMgr.cpp
+	g++ $(CFLAGS) -c connectionMgr.cpp -o connectionMgr
 
 clean:
 	rm -f *.o
-	rm -f core
+	rm -f connectionMgr
 	rm -f fingerserver
 	rm -f fingerclient
 
