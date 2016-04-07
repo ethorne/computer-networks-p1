@@ -30,7 +30,7 @@ class ConnectionMgr
 		int Connect(string host, string port);
 		void Disconnect();
 	
-		void Listen(string port);
+		int Listen(string port);
 		int Accept(sockaddr_storage &clientAddr, socklen_t &addrSize);
 
 		string RecvString(int port);

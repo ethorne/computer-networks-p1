@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 	}
 	port = string(argv[1]);
 	ConnectionMgr mgr(MAX_CONNECTIONS);
-	mgr.Listen(port);
+	int listenSock = mgr.Listen(port);
 	
 	cerr << "server listening on port " << port << endl;
 	
@@ -26,19 +26,26 @@ int main(int argc, char *argv[])
 		{
 			break;
 		}
-		cerr << "new client on port " << commSock << endl;
-		cerr << "waiting to receive string from client..." << endl;
-		string message = mgr.RecvString(commSock);
-		cerr << "got string from client: " << message << endl;
-	
-		if (dup2(commSock, 1) < 0 || dup2(commSock, 2) < 0)
+		
+		if (!fork())
 		{
-			perror("dup2");
-			break;
+			close(listenSock);
+
+			cerr << "new client on port " << commSock << endl;
+			cerr << "waiting to receive string from client..." << endl;
+			string message = mgr.RecvString(commSock);
+			cerr << "got string from client: " << message << endl;
+		
+			if (dup2(commSock, 1) < 0 || dup2(commSock, 2) < 0)
+			{
+				perror("dup2");
+				break;
+			}
+			execl("/usr/bin/finger", "finger", message.c_str(), (char * )0);
+			close(commSock);
+			exit(-1);
 		}
-		execl("/usr/bin/finger", "finger", message.c_str(), (char * )0);
 		close(commSock);
-		break;
 	}
 	
 	cerr << "shutting down server..." << endl;

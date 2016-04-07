@@ -30,23 +30,15 @@ int main(int argc, char *argv[])
 		return -1;	
 	}
 	
-	cerr << cliArgs->print() << endl;
-	
 	ConnectionMgr mgr(MAX_CONNECTIONS);
 	int sockfd = mgr.Connect(cliArgs->host, cliArgs->sockStr);
 	
-	if (mgr.CheckConnected())
-	{
-		cerr << "Successfully connected!" << endl;
-	}
-	else
+	if (!mgr.CheckConnected())
 	{
 		cerr << "Failed to connect!" << endl;
 		return -1;
 	}
 	
-	cerr << "press enter to send string" << endl;
-	cin.get();
 	if (mgr.SendString(sockfd, cliArgs->user))
 	{
 		cerr << mgr.RecvString(sockfd) << endl;

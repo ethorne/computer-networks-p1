@@ -62,13 +62,13 @@ void ConnectionMgr::Disconnect()
 	}
 }
 
-void ConnectionMgr::Listen(string port)
+int ConnectionMgr::Listen(string port)
 {
 	this->sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (this->sock < 0)
 	{
 		this->isListening = false;
-		return;
+		return -1;
 	}
 	
 	if (this->socketInfo != NULL)
@@ -85,10 +85,11 @@ void ConnectionMgr::Listen(string port)
 	if (status < 0)
 	{
 		this->isListening = false;
-		return;
+		return -1;
 	}
 	status = listen(this->sock, this->maxPending);
 	this->isListening = status >= 0;
+	return this->sock;
 }
 
 int ConnectionMgr::Accept(sockaddr_storage &clientAddr, socklen_t &addrSize)
