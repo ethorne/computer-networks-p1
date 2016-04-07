@@ -8,3 +8,7 @@ Compile with `make`. There is also a `make clean` that removes all the executabl
 
 ## assumptions
 The machine that the server is running on has the `finger` utility installed in `/usr/bin/finger`
+
+### resources
+Below is a list of resources used in the creation of these executables.
+  - http://beej.us/guide/bgnet/output/html/multipage/

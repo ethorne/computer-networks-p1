@@ -31,10 +31,8 @@ int main(int argc, char *argv[])
 		{
 			close(listenSock);
 
-			cerr << "new client on port " << commSock << endl;
-			cerr << "waiting to receive string from client..." << endl;
+			cerr << "new client - communicating on port " << commSock << endl;
 			string message = mgr.RecvString(commSock);
-			cerr << "got string from client: " << message << endl;
 		
 			if (dup2(commSock, 1) < 0 || dup2(commSock, 2) < 0)
 			{
@@ -50,7 +48,7 @@ int main(int argc, char *argv[])
 	
 	cerr << "shutting down server..." << endl;
 	mgr.Disconnect();
-	cerr << "server shut down" << endl;
+	cerr << "Goodbye!" << endl;
 	
 	return 0;
 }
