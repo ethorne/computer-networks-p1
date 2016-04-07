@@ -6,12 +6,13 @@ struct CliArgs{
 	string user;
 	string host;
 	unsigned short sock;
+	string sockStr;
 	
 	string print()
 	{
 		string ret = "user:\t" + user +
 					"\nhost:\t" + host +
-					"\nsock:\t" + ConnectionMgr::NumToString<unsigned short>(sock);
+					"\nsock:\t" + sockStr;
 		return ret;
 	}
 };
@@ -32,8 +33,7 @@ int main(int argc, char *argv[])
 	cerr << cliArgs->print() << endl;
 	
 	ConnectionMgr mgr(MAX_CONNECTIONS);
-	mgr.Connect(cliArgs->host,
-			ConnectionMgr::NumToString<unsigned short>(cliArgs->sock));
+	int sockfd = mgr.Connect(cliArgs->host, cliArgs->sockStr);
 	
 	if (mgr.CheckConnected())
 	{
@@ -45,6 +45,16 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 	
+	cerr << "press enter to send string" << endl;
+	cin.get();
+	if (mgr.SendString(sockfd, cliArgs->user))
+	{
+		cerr << mgr.RecvString(sockfd) << endl;
+	}
+	else
+	{
+		cerr << "failed to send command to host on port " << sockfd << endl;
+	}
 	mgr.Disconnect();
 	delete cliArgs;
 	return 0;
@@ -72,7 +82,7 @@ bool getCliArgs(int argc, char *argv[], CliArgs *args)
 	args->host = raw.substr(atPos + 1, colonPos - atPos -  1);
 	string sockStr = raw.substr(colonPos + 1, raw.length() - colonPos);
 	args->sock = atoi(sockStr.c_str());
-	
+	args->sockStr = sockStr;	
 	return true;
 }
 

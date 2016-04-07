@@ -27,14 +27,14 @@ class ConnectionMgr
 	public:
 		ConnectionMgr(int maximumConnections);
 		~ConnectionMgr();
-		void Connect(string host, string port);
+		int Connect(string host, string port);
 		void Disconnect();
 	
 		void Listen(string port);
 		int Accept(sockaddr_storage &clientAddr, socklen_t &addrSize);
 
-		void RecvString(int port, string data);
-		void SendString(int port, string data);
+		string RecvString(int port);
+		bool SendString(int port, string data);
 		
 		template <typename N>
 		static string NumToString(N num)

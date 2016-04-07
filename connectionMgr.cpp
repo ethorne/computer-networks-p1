@@ -12,7 +12,7 @@ ConnectionMgr::ConnectionMgr(int maximumConnections)
 	this->socketInfo = NULL;
 }
 
-void ConnectionMgr::Connect(string host, string port)
+int ConnectionMgr::Connect(string host, string port)
 {
 	// TODO : allow to connect if already isConnected?
 	this->isConnected = false;
@@ -24,7 +24,7 @@ void ConnectionMgr::Connect(string host, string port)
 		this->isConnected = false;
 		cerr << "[cxn mgr] ERROR getting address info for " << host << endl;
 		fprintf(stderr, "\tgetaddrinfo:\t%s\n", gai_strerror(status));
-		return;
+		return -1;
 	}
 	
 	addrinfo *p;
@@ -33,21 +33,20 @@ void ConnectionMgr::Connect(string host, string port)
 		if ((this->sock = socket(p->ai_family, 
 						p->ai_socktype, p->ai_protocol)) == -1)
 		{
-			perror("socket");
+			perror("[cxn mgr] socket");
 			continue;
 		}
 
 		if (connect(this->sock, p->ai_addr, p->ai_addrlen) == -1)
 		{
-			perror("connect");
+			perror("[cxn mgr] connect");
 			close(this->sock);
 			continue;
 		}
 		this->isConnected = true;
 		break;
 	}
-
-	cerr << "[cxn mgr] connected with status " << status << endl;
+	return this->sock;
 }
 
 
@@ -104,12 +103,37 @@ int ConnectionMgr::Accept(sockaddr_storage &clientAddr, socklen_t &addrSize)
 	return accept(this->sock, (sockaddr *) &clientAddr, &addrSize);
 }
 
-void ConnectionMgr::RecvString(int port, string data)
+string ConnectionMgr::RecvString(int port)
 {
+	const int MAXBUFF = 1000;
+	char buffer[MAXBUFF + 1];
+	for(int i = 0; i < MAXBUFF + 1; i++)
+	{
+		buffer[i] = '\0';
+	}
+	char *bufferPtr = buffer;
+	int bytesRead = 0;
+	while ((bytesRead = recv(port, (void*) bufferPtr, MAXBUFF, 0)) > 0)
+	{
+		if (*(bufferPtr + bytesRead) == '\0')
+		{
+			break;
+		}
+		bufferPtr += bytesRead;
+	}
+	return string(bufferPtr);
 }
 
-void ConnectionMgr::SendString(int port, string data)
+bool ConnectionMgr::SendString(int port, string data)
 {
+	data += '\0'; // add null terminating character
+	int bytesSent = send(port, (void*) data.c_str(), data.length(), 0);
+	bool ret = bytesSent == -1 || bytesSent == (int) data.length();
+	if (!ret)
+	{
+		perror("[cxn mgr] Send String");
+	}
+	return ret;
 }
 
 int ConnectionMgr::StringToInt(string str)
